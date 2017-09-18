@@ -46,6 +46,7 @@ class Dbreplace
             echo 'Could not select database';
             exit;
         }
+        //        set_error_handler(array($this, 'errorHandler'));
         $this->tables = array(
             'options' => array('option_value'),
             'postmeta' => array('meta_value'),
@@ -93,6 +94,7 @@ class Dbreplace
             $this->field.
             ' LIKE "%'.mysql_real_escape_string($this->search).'%"';
         $result      = mysql_query($query, $this->conn);
+        echo $query."\n";
         while ($row         = mysql_fetch_assoc($result)) {
             $value = $this->processField($row[$field]);
             if ($value != $row[$field]) {
@@ -234,6 +236,9 @@ class Dbreplace
         } elseif (is_array($value)) {
             return $this->processArray($value);
         } else {
+            if (!is_string($value)) {                
+                return;
+            }
             return str_replace(
                 $this->search, $this->replace, $this->processJson($value)
             );
